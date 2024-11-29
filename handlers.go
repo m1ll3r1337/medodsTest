@@ -34,6 +34,7 @@ func (t Tokens) GetTokensHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	t.CreateTokens(w, guid, ip)
+	_, _ = w.Write([]byte("Tokens created successfully"))
 }
 
 func (t Tokens) RefreshTokensHandler(w http.ResponseWriter, r *http.Request) {
@@ -113,6 +114,8 @@ func (t Tokens) RefreshTokensHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	t.CreateTokens(w, guid, ip)
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte("Tokens refreshed successfully"))
 }
 
 func (t Tokens) CreateTokens(w http.ResponseWriter, guid, ip string) {

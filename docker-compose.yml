@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_HOST: ${PSQL_HOST}
+      POSTGRES_USER: ${PSQL_USER}
+      POSTGRES_PASSWORD: ${PSQL_PASSWORD}
+      POSTGRES_DB: ${PSQL_DATABASE}
+    ports:
+      - "${PSQL_PORT}:5432"
+    networks:
+      - service-network
+
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: token_service
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://${PSQL_USER}:${PSQL_PASSWORD}@db:${PSQL_PORT}/${PSQL_DATABASE}?sslmode=${PSQL_SSLMODE}
+    depends_on:
+      - db
+    env_file:
+      - .env
+    networks:
+      - service-network
+
+
+networks:
+  service-network:
+    driver: bridge
